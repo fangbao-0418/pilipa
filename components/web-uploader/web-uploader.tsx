@@ -438,6 +438,10 @@ class WebUploader extends React.Component <Props, States> {
       percentage: 0,
       sumSize: 'OKb'
     })
+    document.removeEventListener('dragover', this.dragOverEvent)
+    document.removeEventListener('dragenter', this.dragEnterEvent)
+    document.removeEventListener('dragleave', this.dragLeaveEvent)
+    document.removeEventListener('drop', this.dropEvent)
   }
   // 忽略未上传的
   public toIgnore () {
@@ -468,10 +472,6 @@ class WebUploader extends React.Component <Props, States> {
     return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals)
   }
   public toClose () {
-    document.removeEventListener('dragover', this.dragOverEvent)
-    document.removeEventListener('dragenter', this.dragEnterEvent)
-    document.removeEventListener('dragleave', this.dragLeaveEvent)
-    document.removeEventListener('drop', this.dropEvent)
     $(`.pilia-web-uploader-menu-${WebUploader.id}`).remove()
     bus.trigger('close', this.uploadedUrls)
     this.resetData()
