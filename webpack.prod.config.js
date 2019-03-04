@@ -144,6 +144,9 @@ module.exports = [
       react: 'react',
       'react-dom': 'react-dom',
       viewerjs: 'viewerjs'
+    },
+    performance: {
+      maxAssetSize: 5 * 1024 * 1024
     }
   },
   {
@@ -257,6 +260,9 @@ module.exports = [
       react: 'react',
       'react-dom': 'react-dom',
       viewerjs: 'viewerjs'
+    },
+    performance: {
+      maxAssetSize: 5 * 1024 * 1024
     }
   }
 ]

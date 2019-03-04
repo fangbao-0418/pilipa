@@ -12,17 +12,24 @@ export interface MyOptions {
   onCancel?: () => void
   mask?: boolean
   maskClosable?: boolean
+  cancelText?: string
+  okText?: string
 }
 class Modal {
   public static maskClosable: boolean = true
+  public static position: 'normal' | 'reverse' = 'normal'
   public static config (config: {
-    maskClosable: boolean
+    maskClosable?: boolean,
+    position?: 'normal' | 'reverse'
   }) {
-    Modal.maskClosable = config.maskClosable
+    Modal.maskClosable = config.maskClosable !== undefined ? config.maskClosable : Modal.maskClosable
+    Modal.position = config.position !== undefined ? config.position : Modal.position
   }
   public style: string
   public className: string
   public title: string = 'Modal'
+  public okText = '确 定'
+  public cancelText = '取 消'
   public header: any
   public content: any
   public footer: any
@@ -39,6 +46,8 @@ class Modal {
     this.style = options.style
     this.className = options.className
     this.title = options.title || this.title
+    this.cancelText = options.cancelText || this.cancelText
+    this.okText = options.okText || this.okText
     this.header = options.header
     this.content = options.content
     this.footer = options.footer
@@ -47,14 +56,6 @@ class Modal {
     this.mask = options.mask !== undefined ? options.mask : this.mask
     this.maskClosable = options.maskClosable !== undefined ? options.maskClosable : Modal.maskClosable
     this.$el.addClass(this.defaultCls)
-    // $('body').on('click', (event) => {
-    //   this.pageX = event.pageX
-    //   this.pageY = event.pageY
-    //   if (this.$el.find(event.target)) {
-    //     this.pageX = undefined
-    //     this.pageY = undefined
-    //   }
-    // })
   }
   public destroy () {
     this.$el.remove()
@@ -69,12 +70,12 @@ class Modal {
     if (this.footer === undefined) {
       this.$el.find('.pilipa-modal-footer button').unbind('click').click((event) => {
         const index = $(event.target).index()
-        if (index === 1) {
+        if (index === 1 && Modal.position === 'normal' || index === 0 && Modal.position === 'reverse') {
           this.hide()
           if (this.onCancel) {
             this.onCancel()
           }
-        } else if (index === 0) {
+        } else if (index === 0 && Modal.position === 'normal' || index === 1 && Modal.position === 'reverse') {
           if (this.onOk) {
             this.onOk()
           }
@@ -172,6 +173,16 @@ class Modal {
     }
   }
   public template () {
+    let buttons = `
+      <button class="pilipa-btn pilipa-btn-primary">${this.okText}</button>
+      <button class="pilipa-btn pilipa-btn-default">${this.cancelText}</button>
+    `
+    if (Modal.position === 'reverse') {
+      buttons = `
+        <button class="pilipa-btn pilipa-btn-default">${this.cancelText}</button>
+        <button class="pilipa-btn pilipa-btn-primary">${this.okText}</button>
+      `
+    }
     return `
       <div class="${this.defaultCls}-mask"></div>
       <div class="${this.defaultCls}-wrap">
@@ -182,8 +193,7 @@ class Modal {
           </div>
           <div class="${this.defaultCls}-body"></div>
           <div class="${this.defaultCls}-footer">
-            <button class="pilipa-btn pilipa-btn-primary">确 定</button>
-            <button class="pilipa-btn pilipa-btn-default">取 消</button>
+            ${buttons}
           </div>
         </div>
       </div>

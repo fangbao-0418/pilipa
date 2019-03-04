@@ -1,11 +1,10 @@
 import React from 'react'
-import { findDOMNode } from 'react-dom'
 import modal from '../components/modal'
 import $ from 'jquery'
 modal.config({
   maskClosable: false
+  // position: 'reverse'
 })
-console.log(modal, 'modal')
 class Content extends React.Component {
   toClick () {
     alert('xxx')
