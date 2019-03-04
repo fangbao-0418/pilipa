@@ -61,6 +61,10 @@ class WebUploader extends React.Component <Props, States> {
   public uploadTarget = this.props.uploadTarget || '图片'
   public parallel = 10
   public maxIndex = 5
+  public dragOverEvent: any
+  public dragEnterEvent: any
+  public dragLeaveEvent: any
+  public dropEvent: any
   public state: States = {
     initShow: this.files.length === 0,
     files: this.files,
@@ -86,11 +90,7 @@ class WebUploader extends React.Component <Props, States> {
     this.handleDrop()
   }
   public componentWillUnmount () {
-    bus.off()
-    document.removeEventListener('dragenter', this.dragEnterEvent.bind(this))
-    document.removeEventListener('dragleave', this.dragLeaveEvent.bind(this))
-    document.removeEventListener('drop', this.dropEvent.bind(this))
-    this.resetData()
+    this.toClose()
   }
   public fileReaded (data: {index: number, name: string, hash: string}) {
     const { index } = data
@@ -119,41 +119,39 @@ class WebUploader extends React.Component <Props, States> {
       })
     }
   }
-  public dragEnterEvent (event: any) {
+  public handleDrop () {
     const $dropArea = $(this.refs['drop-area'])
-    if ($dropArea.parent().find(event.target).length) {
-      $dropArea.css({
-        border: '2px rgba(0, 0, 0, .8) dashed'
-      })
+    this.dragOverEvent = (event: any) => {
+      event.preventDefault()
     }
-  }
-  public dragLeaveEvent (event: any) {
-    const $dropArea = $(this.refs['drop-area'])
-    if (!$dropArea.parent().find(event.target).length) {
+    this.dragEnterEvent = (event: any) => {
+      if ($dropArea.parent().find(event.target).length) {
+        $dropArea.css({
+          border: '2px rgba(0, 0, 0, .8) dashed'
+        })
+      }
+    }
+    this.dragLeaveEvent = (event: any) => {
+      if (!$dropArea.parent().find(event.target).length) {
+        $dropArea.css({
+          border: ''
+        })
+      }
+    }
+    this.dropEvent = (event: any) => {
       $dropArea.css({
         border: ''
       })
+      event.preventDefault()
+      for (const item of event.dataTransfer.files) {
+        this.files.push(item)
+      }
+      this.filterRepeatFile()
     }
-  }
-  public dropEvent (event: any) {
-    const $dropArea = $(this.refs['drop-area'])
-    $dropArea.css({
-      border: ''
-    })
-    event.preventDefault()
-    for (const item of event.dataTransfer.files) {
-      this.files.push(item)
-    }
-    this.filterRepeatFile()
-  }
-  public dragOverEvent (event: any) {
-    event.preventDefault()
-  }
-  public handleDrop () {
-    document.addEventListener('dragover', this.dragOverEvent.bind(this))
-    document.addEventListener('dragenter', this.dragEnterEvent.bind(this))
-    document.addEventListener('dragleave', this.dragLeaveEvent.bind(this))
-    document.addEventListener('drop', this.dropEvent.bind(this))
+    document.addEventListener('dragover', this.dragOverEvent)
+    document.addEventListener('dragenter', this.dragEnterEvent)
+    document.addEventListener('dragleave', this.dragLeaveEvent)
+    document.addEventListener('drop', this.dropEvent)
   }
   // 手动添加文件
   public toAddFile () {
@@ -470,6 +468,10 @@ class WebUploader extends React.Component <Props, States> {
     return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals)
   }
   public toClose () {
+    document.removeEventListener('dragenter', this.dragOverEvent)
+    document.removeEventListener('dragenter', this.dragEnterEvent)
+    document.removeEventListener('dragleave', this.dragLeaveEvent)
+    document.removeEventListener('drop', this.dropEvent)
     $(`.pilia-web-uploader-menu-${WebUploader.id}`).remove()
     bus.trigger('close', this.uploadedUrls)
     this.resetData()
