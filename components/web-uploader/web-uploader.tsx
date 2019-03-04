@@ -468,7 +468,7 @@ class WebUploader extends React.Component <Props, States> {
     return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals)
   }
   public toClose () {
-    document.removeEventListener('dragenter', this.dragOverEvent)
+    document.removeEventListener('dragover', this.dragOverEvent)
     document.removeEventListener('dragenter', this.dragEnterEvent)
     document.removeEventListener('dragleave', this.dragLeaveEvent)
     document.removeEventListener('drop', this.dropEvent)
