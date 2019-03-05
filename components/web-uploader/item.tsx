@@ -155,16 +155,8 @@ export default class extends React.Component <Props, States> {
   }
   public readFile () {
     const reader: FileReader = new FileReader()
-    const reader2: FileReader = new FileReader()
-    reader.readAsDataURL(this.props.file)
+    reader.readAsBinaryString(this.props.file)
     reader.onload = (e: any) => {
-      const result = e.target.result
-      this.setState({
-        src: result
-      })
-    }
-    reader2.readAsBinaryString(this.props.file)
-    reader2.onload = (e: any) => {
       const result = e.target.result
       const hash = md5(result, 32).toUpperCase()
       bus.trigger('file-readed', {
@@ -173,6 +165,9 @@ export default class extends React.Component <Props, States> {
         hash
       })
     }
+    this.setState({
+      src: window.URL.createObjectURL(this.props.file)
+    })
   }
   public fileUpload () {
     if (this.success) {
