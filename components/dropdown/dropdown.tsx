@@ -87,7 +87,12 @@ export default class extends React.Component<MyProps, MyStates> {
     const { button } = this.refs
     if (this.type === 'click') {
       $(button).click(() => {
-        this.handleEnter()
+        const results = this.refs.results
+        if (results) {
+          this.handleLeave()
+        } else {
+          this.handleEnter()
+        }
       })
       $(document).on('click', (event) => {
         if($dropdowm.find(event.target).length === 0) {
@@ -305,6 +310,9 @@ export default class extends React.Component<MyProps, MyStates> {
       if (this.isDestroy) {
         return
       }
+      $(button).find('.btn-right i').removeClass('pilipa-dropdown-arrow-up pilipa-dropdown-arrow-active')
+      $(button).find('.btn-right i').addClass('pilipa-dropdown-arrow-down')
+      $(button).find('.btn-right i').addClass('pilipa-dropdown-arrow-active')
       this.handleAllData(this.props)
       this.seleted = false
       this.setState({
