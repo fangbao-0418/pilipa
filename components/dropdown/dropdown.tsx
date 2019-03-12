@@ -24,6 +24,7 @@ export interface MyProps {
   initCapital?: (item: any) => string[]
   delay?: number
   disabled?: boolean
+  animation?: boolean
 }
 
 export interface MyStates {
@@ -298,7 +299,23 @@ export default class extends React.Component<MyProps, MyStates> {
       clearTimeout(this.t)
     }
     delay = delay || 0
+    const animation = this.props.animation !== undefined ? this.props.animation : true
     const { button, results } = this.refs
+    if (!animation) {
+      if (this.isDestroy) {
+        return
+      }
+      this.handleAllData(this.props)
+      this.seleted = false
+      this.setState({
+        visible: false,
+        selectedIndex: this.selectedIndex,
+        filterVal: '',
+        data: this.allData.slice(0, this.pageNum * this.defaultPage),
+        dataTmp: this.allData
+      })
+      return
+    }
     this.t = setTimeout(() => {
       $(results).addClass('custom-slide-up-leave')
       $(button).find('.btn-right i').removeClass('pilipa-dropdown-arrow-up pilipa-dropdown-arrow-active')

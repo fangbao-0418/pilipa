@@ -146,7 +146,9 @@ module.exports = [
       viewerjs: 'viewerjs'
     },
     performance: {
-      maxAssetSize: 5 * 1024 * 1024
+      // hints: false,
+      maxAssetSize: 5 * 1024 * 1024,
+      maxEntrypointSize: 5 * 1024 * 1024
     }
   },
   {
@@ -262,7 +264,9 @@ module.exports = [
       viewerjs: 'viewerjs'
     },
     performance: {
-      maxAssetSize: 5 * 1024 * 1024
+      // hints: false,
+      maxAssetSize: 5 * 1024 * 1024,
+      maxEntrypointSize: 5 * 1024 * 1024
     }
   }
 ]

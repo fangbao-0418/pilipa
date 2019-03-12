@@ -69,6 +69,7 @@ export default class extends React.Component {
           }}
         />
         <AutoComplete
+          animation={false}
           style={{float: 'left'}}
           data={this.data.slice(0, 4)}
           setFields={{

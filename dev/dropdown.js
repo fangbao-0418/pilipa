@@ -47,6 +47,7 @@ export default class extends React.Component {
         >{this.state.name}</button>
         <DropDown
           // delay={2000}
+          animation={false}
           type='click'
           style={{float: 'left', marginRight: '20px'}}
           data={[]}
@@ -56,7 +57,7 @@ export default class extends React.Component {
           filter
         />
         <DropDown
-          delay={2000}
+          // delay={2000}
           // defaultValue={{key: '测试数据55', title: '测试数据5'}}
           defaultValue={{
             title: this.state.title

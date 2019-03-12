@@ -22,6 +22,7 @@ export interface MyProps {
   placement?: 'top' | 'bottom'
   select?: boolean
   disabled?: boolean
+  animation?: boolean
 }
 export interface MyStates {
   data: T[]
@@ -44,6 +45,7 @@ class AutoComplete extends React.Component<MyProps, MyStates> {
   public placement: 'top' | 'bottom' = this.props.placement === undefined ? 'bottom' : this.props.placement
   constructor (props: MyProps) {
     super(props)
+    this.documentClickListener = this.documentClickListener.bind(this)
     this.handleAllData(this.props.data)
     this.state = {
       data: this.allData.slice(0, this.pageNum),
@@ -85,11 +87,34 @@ class AutoComplete extends React.Component<MyProps, MyStates> {
         this.event.returnValue = false
       }
     })
+    document.addEventListener('click', this.documentClickListener)
   }
   public componentWillUnmount () {
+    document.removeEventListener('click', this.documentClickListener)
     this.isDestroy = true
     if (this.t !== undefined) {
       clearTimeout(Number(this.t))
+    }
+  }
+  public documentClickListener (e: any) {
+    const input: any = this.refs.input
+    const results: any = this.refs.results
+    if (results) {
+      if (!input.contains(e.target) && !results.contains(e.target)) {
+        if (this.props.onPanelHide) {
+          this.props.onPanelHide()
+        }
+        const animation = this.props.animation !== undefined ? this.props.animation : true
+        if (!animation) {
+          this.hide()
+          return
+        }
+        $(results).addClass('custom-slide-up-leave')
+        this.t = setTimeout(() => {
+          $(results).removeClass('custom-slide-up-leave')
+          this.hide()
+        }, 300)
+      }
     }
   }
   public getDefaultValue (props: MyProps = this.props) {
@@ -222,29 +247,28 @@ class AutoComplete extends React.Component<MyProps, MyStates> {
           bottom: height
         })
       }
-      $(results).addClass('custom-slide-up-enter')
-      this.t = setTimeout(() => {
-        $(results).addClass('custom-slide-up-enter')
-      }, 300)
-      el.off('blur')
-      $(results).hover(() => {
-        this.hover = true
-      }, () => {
-        this.hover = false
-      })
-      el.blur(() => {
-        if (this.props.onPanelHide) {
-          this.props.onPanelHide()
-        }
-        console.log(this.hover, 'blur')
-        if (!this.hover) {
-          $(results).addClass('custom-slide-up-leave')
-          this.t = setTimeout(() => {
-            $(results).removeClass('custom-slide-up-leave')
-            this.hide()
-          }, 300)
-        }
-      })
+      // $(results).addClass('custom-slide-up-enter')
+      // this.t = setTimeout(() => {
+      //   $(results).addClass('custom-slide-up-enter')
+      // }, 300)
+      // el.off('blur')
+      // $(results).hover(() => {
+      //   this.hover = true
+      // }, () => {
+      //   this.hover = false
+      // })
+      // el.blur(() => {
+      //   if (this.props.onPanelHide) {
+      //     this.props.onPanelHide()
+      //   }
+      //   if (!this.hover) {
+      //     $(results).addClass('custom-slide-up-leave')
+      //     this.t = setTimeout(() => {
+      //       $(results).removeClass('custom-slide-up-leave')
+      //       this.hide()
+      //     }, 300)
+      //   }
+      // })
     })
   }
   public hide () {
@@ -300,7 +324,11 @@ class AutoComplete extends React.Component<MyProps, MyStates> {
     const { data, value, visible } = this.state
     const { className, placeholder } = this.props
     return (
-      <div className={classNames(this.defaultCls, className)} style={this.props.style}>
+      <div
+        ref='el'
+        className={classNames(this.defaultCls, className)}
+        style={this.props.style}
+      >
         <input
           type='text'
           placeholder={placeholder}

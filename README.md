@@ -33,6 +33,7 @@ define(['jquery', 'react', 'react-dom', 'viewerjs', 'ali-oss'], ($, React, React
 
 # Change Log 
 
-### 3.0.2
-  &nbsp;&nbsp; `2018-06-07` 
-  - loading 组件改版 样式优化 #32
+### 3.0.7
+  &nbsp;&nbsp; `2019-03-12` 
+  - auto-complete 组件优化
+  - dropdown 组件优化
