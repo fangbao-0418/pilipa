@@ -1,6 +1,6 @@
-import $ from 'jquery'
 import React from 'react'
 import { findDOMNode, render } from 'react-dom'
+import $ from '../dom'
 import * as modules from '../index'
 const Components: any = modules
 let instance: object = null

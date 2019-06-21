@@ -1,7 +1,7 @@
 import ClassNames from 'classnames'
-import $ from 'jquery'
 import React from 'react'
 import { getCapital } from '../_util'
+import $, { DomInstance } from '../dom'
 export interface T {
   index?: number
   title: string

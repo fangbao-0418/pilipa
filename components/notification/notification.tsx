@@ -1,5 +1,6 @@
-import $ from 'jquery'
 import React from 'react'
+import $, { DomInstance } from '../dom'
+
 export interface Options {
   title?: string
   message: string
@@ -55,7 +56,7 @@ export default {
       }, time)
     })
   },
-  leave (template: JQuery) {
+  leave (template: DomInstance) {
     template.addClass('pilipa-notification-fade-leave pilipa-notification-fade-active')
     setTimeout(() => {
       template.removeClass('pilipa-notification-fade-enter pilipa-notification-fade-active')

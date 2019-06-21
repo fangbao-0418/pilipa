@@ -57,7 +57,7 @@ export default class extends React.Component {
         />
         <AutoComplete
           style={{float: 'left'}}
-          data={this.data.slice(0, 4)}
+          data={this.data}
           select={true}
           setFields={{
             title: 'title2',

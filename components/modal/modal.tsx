@@ -1,6 +1,6 @@
-import $ from 'jquery'
 import React from 'react'
 import { render } from 'react-dom'
+import $, { DomInstance } from '../dom'
 export interface MyOptions {
   style?: string
   className?: string
@@ -37,7 +37,7 @@ class Modal {
   public onCancel: () => void
   public mask: boolean = true
   public maskClosable: boolean = true
-  public $el = $('<div />')
+  public $el: DomInstance
   public defaultCls = 'pilipa-modal'
   public pageX: number
   public pageY: number = 0
@@ -61,14 +61,14 @@ class Modal {
     this.$el.remove()
   }
   public initEvent () {
-    this.$el.find('.pilipa-modal-close').unbind('click').click(() => {
+    this.$el.find('.pilipa-modal-close').off('click').click(() => {
       if (this.onCancel) {
         this.onCancel()
       }
       this.hide()
     })
     if (this.footer === undefined) {
-      this.$el.find('.pilipa-modal-footer button').unbind('click').click((event) => {
+      this.$el.find('.pilipa-modal-footer button').off('click').click((event) => {
         const index = $(event.target).index()
         if (index === 1 && Modal.position === 'normal' || index === 0 && Modal.position === 'reverse') {
           this.hide()

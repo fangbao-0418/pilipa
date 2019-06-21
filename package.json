@@ -1,6 +1,6 @@
 {
   "name": "pilipa",
-  "version": "3.0.8-alpha.1",
+  "version": "3.0.8-alpha.7",
   "description": "噼里啪前端组件，基于react。",
   "main": "libs/index.js",
   "typings": "libs/index.d.ts",
@@ -19,13 +19,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "animejs": "^3.0.1",
     "babel-polyfill": "^6.26.0",
     "classnames": "^2.2.5"
   },
   "devDependencies": {
-    "@types/ali-oss": "1.0.2",
+    "@types/animejs": "^2.0.2",
     "@types/classnames": "^2.2.3",
-    "@types/jquery": "^3.2.18",
     "@types/react-dom": "16.0.2",
     "autoprefixer": "^7.2.5",
     "awesome-typescript-loader": "^5.0.0",
@@ -50,6 +50,7 @@
     "eslint-plugin-standard": "^3.0.1",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^1.1.11",
+    "font-awesome": "^4.7.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.0",
     "gulp-postcss": "^7.0.1",
@@ -71,6 +72,8 @@
     "koa-webpack-middleware": "^1.0.7",
     "postcss-csso": "^3.0.0",
     "postcss-loader": "^2.0.10",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "rimraf": "^2.6.2",
     "sinon": "^4.5.0",
     "source-map-loader": "^0.2.3",
@@ -89,13 +92,5 @@
     "webpack": "4.5.0",
     "webpack-dev-middleware": "^2.0.0",
     "webpack-hot-middleware": "^2.21.2"
-  },
-  "peerDependencies": {
-    "ali-oss": "*",
-    "font-awesome": "4.7.0",
-    "jquery": "3.*.*",
-    "react": "16.*.*",
-    "react-dom": "16.*.*",
-    "viewerjs": "*"
   }
 }

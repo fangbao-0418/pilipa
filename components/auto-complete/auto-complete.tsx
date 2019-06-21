@@ -1,7 +1,8 @@
 import classNames from 'classnames'
-import $ from 'jquery'
+// import $ from 'jquery'
 import React from 'react'
 import { getCapital } from '../_util'
+import $ from '../dom'
 export interface T {
   title: string
   key?: any
@@ -305,7 +306,7 @@ class AutoComplete extends React.Component<MyProps, MyStates> {
   }
   public listenScroll () {
     const results = this.refs.results
-    $(results).children('.items').off('scroll')
+    // $(results).children('.items').off('scroll')
     $(results).children('.items').scroll((e) => {
       const scrollTop = e.target.scrollTop
       const h = $(results).find('ul').height()

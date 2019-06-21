@@ -1,9 +1,9 @@
 import React from 'react'
 import modal from '../components/modal'
-import $ from 'jquery'
+import $ from '../components/dom'
 modal.config({
-  maskClosable: false
-  // position: 'reverse'
+  maskClosable: false,
+  position: 'reverse'
 })
 class Content extends React.Component {
   toClick () {
@@ -37,9 +37,8 @@ export default class extends React.Component {
       }
     })
     this.modal2 = new modal({
-      title: 'xxx',
+      title: 'modal2',
       mask: false
-
     })
     this.modal3 = new modal({
       title: 'xxx',

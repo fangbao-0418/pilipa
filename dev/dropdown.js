@@ -22,7 +22,6 @@ export default class extends React.Component {
     }]
     let i = 0
     while (i < 100) {
-      console.log(i)
       this.data.push({
         key: i,
         title: `测试数据${i}`

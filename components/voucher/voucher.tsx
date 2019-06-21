@@ -1,6 +1,6 @@
 import ClassNames from 'classnames'
-import $ from 'jquery'
 import React, { SyntheticEvent } from 'react'
+import $, { E } from '../dom'
 export interface VoucherFieldConfigProps {
   abstract?: string
   subjectName?: string
@@ -23,7 +23,7 @@ export interface MyProps {
   fieldCfg?: VoucherFieldConfigProps
   isForeignCurrency?: boolean // 是否是外币
   header?: React.ReactElement<any>
-  onTd?: (event: JQuery.Event, items: any[], index: number) => void
+  onTd?: (event: E, items: any[], index: number) => void
   type?: 'voucher' | 'entry' | 'print'
   showTotal?: boolean
   debitTotal?: number
@@ -85,7 +85,7 @@ class Voucher extends React.Component<MyProps, MyStates> {
   public initOperate () {
     const el = $(this.refs.voucher)
     const { items } = this.state
-    el.find('table tbody tr td:nth-child(1) .fa').unbind('click').click((item) => {
+    el.find('table tbody tr td:nth-child(1) .fa').off('click').click((item) => {
       if (this.props.editable !== true) {
         return
       }
@@ -110,7 +110,7 @@ class Voucher extends React.Component<MyProps, MyStates> {
       return
     }
     const el = $(this.refs.voucher)
-    el.find('table tbody tr td').unbind('click').click((event) => {
+    el.find('table tbody tr td').off('click').click((event) => {
       const cellIndex = $(event.currentTarget).index()
       const rowIndex = $(event.currentTarget).parent().index()
       if (this.props.onTd && cellIndex > 0) {

@@ -1,5 +1,5 @@
-import $ from 'jquery'
 import React from 'react'
+import $, { DomInstance } from '../dom'
 export default {
   $el: $('<div class="pilipa-loading"></div>'),
   hide () {
@@ -7,11 +7,13 @@ export default {
       clearInterval(this.t)
     }
     $('.pilipa-loading-content').fadeOut(10, () => {
-      this.$el.remove()
+      if ($('body').find(this.$el).length > 0) {
+        this.$el.remove()
+      }
     })
   },
   show () {
-    this.$el.html(this.template)
+    this.$el.html(this.template())
     if ($('body').find(this.$el).length > 0) {
       this.$el.remove()
     }

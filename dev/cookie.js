@@ -1,6 +1,6 @@
 import React from 'react'
 import cookie from '../components/cookie'
-import $ from 'jquery'
+import $ from '../components/dom'
 export default class extends React.Component {
   toClick (type) {
     const key = $('input:nth-child(1)').val()

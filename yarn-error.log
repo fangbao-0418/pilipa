@@ -1,14 +1,14 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/bin/yarn publish --registry https://nexus.i-counting.cn/repository/accounting/
+  /usr/local/bin/node /usr/local/bin/yarn add @types/animejs -D
 
 PATH: 
-  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Wireshark.app/Contents/MacOS
 
 Yarn version: 
   1.3.2
 
 Node version: 
-  8.9.3
+  8.10.0
 
 Platform: 
   darwin x64
@@ -16,7 +16,7 @@ Platform:
 npm manifest: 
   {
     "name": "pilipa",
-    "version": "3.0.2-alpha.45",
+    "version": "3.0.8-alpha.2",
     "description": "噼里啪前端组件，基于react。",
     "main": "libs/index.js",
     "typings": "libs/index.d.ts",
@@ -39,11 +39,10 @@ npm manifest:
       "classnames": "^2.2.5"
     },
     "devDependencies": {
-      "@types/ali-oss": "1.0.2",
       "@types/classnames": "^2.2.3",
       "@types/jquery": "^3.2.18",
-      "@types/js-base64": "^2.3.1",
       "@types/react-dom": "16.0.2",
+      "animejs": "^3.0.1",
       "autoprefixer": "^7.2.5",
       "awesome-typescript-loader": "^5.0.0",
       "babel-core": "^6.26.0",
@@ -67,6 +66,7 @@ npm manifest:
       "eslint-plugin-standard": "^3.0.1",
       "extract-text-webpack-plugin": "^4.0.0-beta.0",
       "file-loader": "^1.1.11",
+      "font-awesome": "^4.7.0",
       "gulp": "^3.9.1",
       "gulp-babel": "^7.0.0",
       "gulp-postcss": "^7.0.1",
@@ -76,6 +76,7 @@ npm manifest:
       "html-webpack-plugin": "^3.2.0",
       "http-proxy-middleware": "^0.17.4",
       "jasmine-core": "^3.1.0",
+      "jquery": "^3.4.1",
       "karma": "^2.0.2",
       "karma-chrome-launcher": "^2.2.0",
       "karma-coverage": "^1.1.2",
@@ -88,6 +89,8 @@ npm manifest:
       "koa-webpack-middleware": "^1.0.7",
       "postcss-csso": "^3.0.0",
       "postcss-loader": "^2.0.10",
+      "react": "^16.8.6",
+      "react-dom": "^16.8.6",
       "rimraf": "^2.6.2",
       "sinon": "^4.5.0",
       "source-map-loader": "^0.2.3",
@@ -106,15 +109,6 @@ npm manifest:
       "webpack": "4.5.0",
       "webpack-dev-middleware": "^2.0.0",
       "webpack-hot-middleware": "^2.21.2"
-    },
-    "peerDependencies": {
-      "ali-oss": "5.3.1",
-      "font-awesome": "4.7.0",
-      "jquery": "3.3.1",
-      "js-base64": "^2.4.8",
-      "react": "16.3.1",
-      "react-dom": "16.3.1",
-      "viewerjs": "1.0.0"
     }
   }
 
@@ -132,10 +126,6 @@ Lockfile:
     dependencies:
       samsam "1.3.0"
   
-  "@types/ali-oss@1.0.2":
-    version "1.0.2"
-    resolved "https://nexus.i-counting.cn/repository/accounting/@types/ali-oss/-/ali-oss-1.0.2.tgz#3f81e6d42df611939305f10752f4e5160bd3f055"
-  
   "@types/classnames@^2.2.3":
     version "2.2.3"
     resolved "http://registry.npm.taobao.org/@types/classnames/download/@types/classnames-2.2.3.tgz#3f0ff6873da793870e20a260cada55982f38a9e5"
@@ -143,10 +133,6 @@ Lockfile:
   "@types/jquery@^3.2.18":
     version "3.2.18"
     resolved "http://registry.npm.taobao.org/@types/jquery/download/@types/jquery-3.2.18.tgz#a1cd262034cd8c79fa4d9b2a409d8f747ac2f72f"
-  
-  "@types/js-base64@^2.3.1":
-    version "2.3.1"
-    resolved "http://registry.npm.taobao.org/@types/js-base64/download/@types/js-base64-2.3.1.tgz#c39f14f129408a3d96a1105a650d8b2b6eeb4168"
   
   "@types/node@*":
     version "9.6.2"
@@ -303,6 +289,10 @@ Lockfile:
       buffer-more-ints "0.0.2"
       readable-stream "1.x >=1.1.9"
       safe-buffer "^5.0.1"
+  
+  animejs@^3.0.1:
+    version "3.0.1"
+    resolved "https://registry.npm.taobao.org/animejs/download/animejs-3.0.1.tgz#8b808bad575e3b6106489d8b04b92bc4062166fe"
   
   ansi-colors@^1.0.1:
     version "1.0.1"
@@ -3387,6 +3377,10 @@ Lockfile:
     dependencies:
       debug "^3.1.0"
   
+  font-awesome@^4.7.0:
+    version "4.7.0"
+    resolved "https://registry.npm.taobao.org/font-awesome/download/font-awesome-4.7.0.tgz#8fa8cf0411a1a31afd07b06d2902bb9fc815a133"
+  
   for-in@^1.0.1, for-in@^1.0.2:
     version "1.0.2"
     resolved "http://registry.npm.taobao.org/for-in/download/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
@@ -4729,6 +4723,10 @@ Lockfile:
     version "3.1.0"
     resolved "http://registry.npm.taobao.org/jasmine-core/download/jasmine-core-3.1.0.tgz#a4785e135d5df65024dfc9224953df585bd2766c"
   
+  jquery@^3.4.1:
+    version "3.4.1"
+    resolved "https://registry.npm.taobao.org/jquery/download/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
+  
   js-base64@^2.1.9:
     version "2.4.1"
     resolved "http://registry.npm.taobao.org/js-base64/download/js-base64-2.4.1.tgz#e02813181cd53002888e918935467acb2910e596"
@@ -4736,6 +4734,10 @@ Lockfile:
   js-tokens@^3.0.0, js-tokens@^3.0.2:
     version "3.0.2"
     resolved "http://registry.npm.taobao.org/js-tokens/download/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
+  
+  "js-tokens@^3.0.0 || ^4.0.0":
+    version "4.0.0"
+    resolved "https://registry.npm.taobao.org/js-tokens/download/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   
   js-yaml@3.x:
     version "3.11.0"
@@ -5354,6 +5356,12 @@ Lockfile:
     resolved "http://registry.npm.taobao.org/loose-envify/download/loose-envify-1.3.1.tgz#d1a8ad33fa9ce0e713d65fdd0ac8b748d478c848"
     dependencies:
       js-tokens "^3.0.0"
+  
+  loose-envify@^1.4.0:
+    version "1.4.0"
+    resolved "https://registry.npm.taobao.org/loose-envify/download/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
+    dependencies:
+      js-tokens "^3.0.0 || ^4.0.0"
   
   loud-rejection@^1.0.0, loud-rejection@^1.6.0:
     version "1.6.0"
@@ -6811,6 +6819,14 @@ Lockfile:
       loose-envify "^1.3.1"
       object-assign "^4.1.1"
   
+  prop-types@^15.6.2:
+    version "15.7.2"
+    resolved "https://registry.npm.taobao.org/prop-types/download/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
+    dependencies:
+      loose-envify "^1.4.0"
+      object-assign "^4.1.1"
+      react-is "^16.8.1"
+  
   proxy-agent@~2.0.0:
     version "2.0.0"
     resolved "http://registry.npm.taobao.org/proxy-agent/download/proxy-agent-2.0.0.tgz#57eb5347aa805d74ec681cb25649dba39c933499"
@@ -6974,9 +6990,22 @@ Lockfile:
       minimist "^1.2.0"
       strip-json-comments "~2.0.1"
   
+  react-dom@^16.8.6:
+    version "16.8.6"
+    resolved "https://registry.npm.taobao.org/react-dom/download/react-dom-16.8.6.tgz#71d6303f631e8b0097f56165ef608f051ff6e10f"
+    dependencies:
+      loose-envify "^1.1.0"
+      object-assign "^4.1.1"
+      prop-types "^15.6.2"
+      scheduler "^0.13.6"
+  
   react-is@^16.3.2:
     version "16.3.2"
     resolved "http://registry.npm.taobao.org/react-is/download/react-is-16.3.2.tgz#f4d3d0e2f5fbb6ac46450641eb2e25bf05d36b22"
+  
+  react-is@^16.8.1:
+    version "16.8.6"
+    resolved "https://registry.npm.taobao.org/react-is/download/react-is-16.8.6.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact-is%2Fdownload%2Freact-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
   
   react-reconciler@^0.7.0:
     version "0.7.0"
@@ -6995,6 +7024,15 @@ Lockfile:
       object-assign "^4.1.1"
       prop-types "^15.6.0"
       react-is "^16.3.2"
+  
+  react@^16.8.6:
+    version "16.8.6"
+    resolved "https://registry.npm.taobao.org/react/download/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
+    dependencies:
+      loose-envify "^1.1.0"
+      object-assign "^4.1.1"
+      prop-types "^15.6.2"
+      scheduler "^0.13.6"
   
   read-pkg-up@^1.0.1:
     version "1.0.1"
@@ -7485,6 +7523,13 @@ Lockfile:
   sax@^1.2.4, sax@~1.2.1:
     version "1.2.4"
     resolved "http://registry.npm.taobao.org/sax/download/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
+  
+  scheduler@^0.13.6:
+    version "0.13.6"
+    resolved "https://registry.npm.taobao.org/scheduler/download/scheduler-0.13.6.tgz#466a4ec332467b31a91b9bf74e5347072e4cd889"
+    dependencies:
+      loose-envify "^1.1.0"
+      object-assign "^4.1.1"
   
   schema-utils@^0.3.0:
     version "0.3.0"
@@ -8947,14 +8992,4 @@ Lockfile:
     resolved "http://registry.npm.taobao.org/yeast/download/yeast-0.1.2.tgz#008e06d8094320c372dbc2f8ed76a0ca6c8ac419"
 
 Trace: 
-  Error: canceled
-      at Interface.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:121045:13)
-      at emitNone (events.js:106:13)
-      at Interface.emit (events.js:208:7)
-      at Interface._ttyWrite (readline.js:775:16)
-      at ReadStream.onkeypress (readline.js:160:10)
-      at emitTwo (events.js:126:13)
-      at ReadStream.emit (events.js:214:7)
-      at emitKeys (internal/readline.js:420:14)
-      at emitKeys.next (<anonymous>)
-      at ReadStream.onData (readline.js:1011:36)
+  Error: ENOENT: no such file or directory, lstat '/Users/fangbao/Documents/i-counting/react-accounting/node_modules/lodash'

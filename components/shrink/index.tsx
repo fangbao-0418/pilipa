@@ -16,7 +16,8 @@ export interface State {
   visibled: boolean
 }
 class Main extends React.Component<Props, State> {
-  public collapsed = this.props.collapsed !== undefined ? this.props.collapsed : true
+  public collapsed = this.props.collapsed !== undefined
+  ? this.props.collapsed : (this.props.defaultCollapsed !== undefined ? this.props.defaultCollapsed : true)
   public state: State = {
     visibled: !this.collapsed
   }
@@ -50,7 +51,6 @@ class Main extends React.Component<Props, State> {
     const { visibled } = this.state
     const height = this.props.height || 40
     const collapsedNode = this.props.collapsedNode
-    console.log(visibled, 'visibled')
     return (
       <div
         ref='el'
