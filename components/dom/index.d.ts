@@ -49,6 +49,8 @@ export interface DomInstance {
   trigger (event: string): void
   one (envent: string, fn: (e?: E) => void): void
   hover (onmouseover: (e?: any) => void, onmouseleave: (e?: E) => void): void
+  slideDown (): void
+  slideUp (): void
 }
 export interface E extends Event {
   params: any[]

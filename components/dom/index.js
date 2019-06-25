@@ -523,6 +523,38 @@ Dom.prototype = {
         el.select()
       }
     })
+  },
+  slideDown () {
+    this.each((el) => {
+      $(el).css('height', 'auto')
+      const height = $(el).height()
+      anime({
+        targets: el,
+        height: [0, height],
+        opacity: [0, 1],
+        duration: 100,
+        easing: 'easeInOutQuad',
+        begin () {
+          $(el).css('display', '')
+        }
+      })
+    })
+  },
+  slideUp () {
+    this.each((el) => {
+      const height = $(el).height()
+      anime({
+        targets: el,
+        height: [height, 0],
+        opacity: [1, 0],
+        duration: 100,
+        easing: 'easeInOutQuad',
+        complete () {
+          console.log('updated')
+          $(el).css('display', 'none')
+        }
+      })
+    })
   }
 }
 const simulator = (el, event, args) => {

@@ -91,6 +91,22 @@ class Main extends React.Component {
         >隐藏盒子</div>
         <button onClick={this.toggle.bind(this)}>测试</button>
         <span className='info'></span>
+        <button onClick={() => {
+          $('.h').slideUp()
+          // if ($('.h')) {
+          //   $('.h').slideUp()
+          // } else {
+          //   $('.h').slideDown()
+          // }
+        }}>slideUp</button>
+        <button onClick={() => {
+          $('.h').slideDown()
+          // if ($('.h')) {
+          //   $('.h').slideUp()
+          // } else {
+          //   $('.h').slideDown()
+          // }
+        }}>slideDown</button>
       </div>
     )
   }
