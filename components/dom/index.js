@@ -1,4 +1,6 @@
 import anime from 'animejs'
+const cssShow = { position: 'absolute', visibility: 'hidden', display: 'block' }
+var cssExpand = [ 'Top', 'Right', 'Bottom', 'Left' ]
 export default function dom (options) {
   return new Dom(options)
 }
@@ -430,25 +432,19 @@ Dom.prototype = {
   },
   /** 格式化像素 */
   formatPx (str) {
-    return Number(str.trim().replace('px', ''))
+    return Number(str.trim().replace('px', '')) || 0
   },
   width () {
-    return this.formatPx(this.css('witdh'))
+    return getWidthOrHeight(this[0], 'width', 'content')
   },
   height () {
-    return this.formatPx(this.css('height'))
+    return getWidthOrHeight(this[0], 'height', 'content')
   },
-  outerWidth (isContainOuter = false) {
-    const offsetWidth = this[0] ? this[0].offsetWidth : 0
-    const marginLeft = this.formatPx(this.css('marginLeft')) || 0
-    const marginRight = this.formatPx(this.css('marginRight')) || 0
-    return isContainOuter ? offsetWidth + marginLeft + marginRight : offsetWidth
+  outerWidth (extra = false) {
+    return getWidthOrHeight(this[0], 'width', extra ? 'margin' : 'border')
   },
-  outerHeight (isContainOuter = false) {
-    const offsetHeight = this[0] ? this[0].offsetHeight : 0
-    const marginTop = this.formatPx(this.css('marginTop')) || 0
-    const marginBottom = this.formatPx(this.css('marginBottom')) || 0
-    return isContainOuter ? offsetHeight + marginTop + marginBottom : offsetHeight
+  outerHeight (extra = false) {
+    return getWidthOrHeight(this[0], 'height', extra ? 'margin' : 'border')
   },
   offset () {
     if (this[0]) {
@@ -552,4 +548,83 @@ const listener = {
       }
     })
   }
+}
+function curCSS (elem) {
+  return getComputedStyle(elem) || {}
+}
+/**
+ * 获取元素高度或宽度
+ * @param {*} elem - 元素
+ * @param {width|height} dimension - 维度
+ * @param {margin|border|content|''} extra - 盒模型类型
+ * @returns {number}
+ */
+function getWidthOrHeight (elem, dimension, extra) {
+  if (!(typeof elem === 'object' && elem.nodeType)) {
+    throw Error('elem is not a valid Element')
+  }
+  let val = parseFloat(curCSS(elem)[dimension])
+  // const offsetProp = 'offset' + dimension[0].toUpperCase() + dimension.slice(1)
+  const isBorderBox = curCSS(elem).boxSizing === 'border-box'
+  /** 处理隐藏元素 */
+  if (/none/.test(curCSS(elem).display)) {
+    return swap(elem, (el) => {
+      return getWidthOrHeight(el, dimension, extra)
+    })
+  }
+  if (!isBorderBox && extra === 'content') {
+    return parseFloat(val) || 0
+  }
+  // val = elem[offsetProp]
+  val += boxModelAdjustment(elem, dimension, extra, isBorderBox)
+  val = parseFloat(val)
+  return val >= 0 ? val : 0
+}
+/**
+ * 获取盒模型外边距、内边距、边框大小
+ * @param {*} elem - 元素
+ * @param {width|height} dimension - 维度
+ * @param {padding|margin|border} type
+ * @returns {number}
+ */
+function boxModelAdjustment (elem, dimension, type, isBorderBox) {
+  let i = dimension === 'width' ? 1 : 0
+  let ret = 0
+  if ((type === 'content' && !isBorderBox) || (type === 'border' && isBorderBox)) {
+    return 0
+  }
+  for (; i < 4; i += 2) {
+    if (isBorderBox && type === 'content') {
+      ret -= parseFloat(curCSS(elem)['border' + cssExpand[i] + 'Width'])
+      ret -= parseFloat(curCSS(elem)['padding' + cssExpand[i]])
+    } else {
+      if (!isBorderBox) {
+        ret += parseFloat(curCSS(elem)['border' + cssExpand[i] + 'Width'])
+        ret += parseFloat(curCSS(elem)['padding' + cssExpand[i]])
+      }
+      if (type === 'margin') {
+        ret += parseFloat(curCSS(elem)[type + cssExpand[i]])
+      }
+    }
+  }
+  return ret || 0
+}
+/**
+ * 处理隐藏元素
+ * @param {Element} el - 元素
+ * @param {function} callback
+ */
+function swap (el, callback) {
+  let ret
+  let name
+  let old = {}
+  for (name in cssShow) {
+    old[ name ] = el.style[ name ]
+    el.style[ name ] = cssShow[ name ]
+  }
+  ret = callback(el)
+  for (name in cssShow) {
+    el.style[ name ] = old[ name ]
+  }
+  return ret
 }

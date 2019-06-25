@@ -46,11 +46,15 @@ class Main extends React.Component {
     //   e: ''
     // })), 'param')
     $('.info').text(`
+      元素 .h
       width + padding + border ${$('.h').outerWidth()}
       height + padding + border ${$('.h').outerHeight()}
-      content + padding + border + margin ${$('.h').outerHeight(true)}
-      contentHeight ${$('.h').height()}
+      width + padding + border + margin ${$('.h').outerWidth(true)}
+      height + padding + border + margin ${$('.h').outerHeight(true)}
+      content width ${$('.h').width()}
+      content height ${$('.h').height()}
     `)
+    console.log($('.g').height(), '隐藏div高度')
   }
   toggle () {
     !this.clicked ? $('.abc').fadeOut() : $('.abc').fadeIn()
@@ -61,7 +65,15 @@ class Main extends React.Component {
       <div className='box'>
         <div
           className='h'
-          style={{margin: '10px 0 12px', padding: 10, border: '1px solid #000'}}
+          style={{
+            // boxSizing: 'border-box',
+            boxSizing: 'content-box',
+            // display: 'none',
+            height: 100,
+            margin: '10px 8px 12px',
+            padding: 10,
+            border: '1px solid #000'
+          }}
         >
           <div>abc</div>
           <div>def</div>
@@ -69,6 +81,14 @@ class Main extends React.Component {
         <div className='abc'>b</div>
         <div className='d'>d</div>
         <div className='f'>trigger d click</div>
+        <div
+          className='g'
+          style={{
+            width: 100,
+            // height: 100,
+            display: 'none'
+          }}
+        >隐藏盒子</div>
         <button onClick={this.toggle.bind(this)}>测试</button>
         <span className='info'></span>
       </div>
