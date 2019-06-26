@@ -4,6 +4,7 @@ var cssExpand = [ 'Top', 'Right', 'Bottom', 'Left' ]
 export default function dom (options) {
   return new Dom(options)
 }
+dom.expando = 'dom' + Math.random().toString().replace(/\D/g, '')
 /**
  * 对象序列化
  * @param {object} obj
@@ -42,7 +43,34 @@ dom.param = function (obj) {
   const str = arr.join('&')
   return str
 }
-
+/**
+ * 操作css
+ * @param {Element} elem - 元素
+ * @param {string|object} key - 样式名称或者样式对象
+ * @param {string} value - 样式值
+ * @returns {*}
+ */
+dom.css = function (elem, name, value) {
+  if (!(elem instanceof Object && elem.nodeType === 1)) {
+    throw Error('elem is not a valid Element')
+  }
+  const styles = getComputedStyle(elem)
+  if (value !== undefined) {
+    if (typeof name === 'string') {
+      elem.style[name] = value
+    } else {
+      throw Error('key is not string')
+    }
+  } else if (name === undefined) {
+    return styles
+  } else if (typeof name === 'string') {
+    return styles[name]
+  } else if (name instanceof Object) {
+    for (const prop in name) {
+      elem.style[prop] = name[prop]
+    }
+  }
+}
 const Dom = function (selector) {
   if (!selector) {
     return this
@@ -267,34 +295,13 @@ Dom.prototype = {
     }
     return arr
   },
-  fadeIn (n = 50, cb) {
-    anime({
-      targets: this[0],
-      opacity: [0, 1],
-      duration: n,
-      complete () {
-        if (cb) {
-          cb()
-        }
-      }
-    })
-  },
-  fadeOut (n = 50, cb) {
-    anime({
-      targets: this[0],
-      opacity: [1, 0],
-      duration: n,
-      complete () {
-        if (cb) {
-          cb()
-        }
-      }
-    })
-  },
   each (cb) {
     if (cb) {
       for (const key in this) {
         if (/\d{1,}/.test(key) && this.hasOwnProperty(key)) {
+          if (this[key] instanceof Object && this[key].nodeType === 1) {
+            dataPriv.record(this[key])
+          }
           cb(this[key], Number(key))
         }
       }
@@ -328,25 +335,13 @@ Dom.prototype = {
     }
     return name ? style[name] : style
   },
-  css (sourceName, value) {
-    const name = sourceName
-    if (typeof name === 'string') {
-      if (value !== undefined) {
-        this.each((el) => {
-          el.style[name] = value
-        })
-      } else {
-        return this.getComputedStyle(name)
-      }
-    } else if (typeof name === 'object') {
-      for (const key in name) {
-        if (name.hasOwnProperty(key)) {
-          this.each((el) => {
-            el.style[key] = name[key]
-          })
-        }
-      }
+  css (name, value) {
+    if (typeof name === 'string' && value === undefined) {
+      return dom.css(this[0], name)
     }
+    this.each((el) => {
+      dom.css(el, name, value)
+    })
   },
   addClass (name = '') {
     this.each((el) => {
@@ -524,34 +519,101 @@ Dom.prototype = {
       }
     })
   },
-  slideDown () {
+  slideDown (duration = 100, easing = 'easeInOutQuad', cb) {
+    if (easing instanceof Function) {
+      cb = easing
+      easing = 'easeInOutQuad'
+    }
     this.each((el) => {
-      $(el).css('height', 'auto')
-      const height = $(el).height()
+      const display = dom.css(el, 'display')
+      if (display !== 'none') {
+        return
+      }
+      const orig = dataPriv.get(el)
       anime({
         targets: el,
-        height: [0, height],
+        height: [0, parseFloat(orig.height)],
         opacity: [0, 1],
-        duration: 100,
-        easing: 'easeInOutQuad',
+        duration,
+        easing,
         begin () {
-          $(el).css('display', '')
+          if (display !== 'none') {
+            dom.css(el).css('display', dataPriv.get(el, 'display'))
+          } else {
+            dom.css(el, 'display', '')
+          }
+        },
+        complete () {
+          dataPriv.restore(el)
+          if (cb) {
+            cb()
+          }
         }
       })
     })
   },
-  slideUp () {
+  slideUp (duration = 100, easing = 'easeInOutQuad', cb) {
+    if (easing instanceof Function) {
+      cb = easing
+      easing = 'easeInOutQuad'
+    }
     this.each((el) => {
-      const height = $(el).height()
+      if (dom.css(el).display === 'none') {
+        return
+      }
+      const orig = dataPriv.get(el)
       anime({
         targets: el,
-        height: [height, 0],
+        height: [parseFloat(orig.height), 0],
         opacity: [1, 0],
-        duration: 100,
-        easing: 'easeInOutQuad',
+        duration,
+        easing: easing,
         complete () {
-          console.log('updated')
-          $(el).css('display', 'none')
+          dataPriv.restore(el)
+          dom.css(el, 'display', 'none')
+          if (cb) {
+            cb()
+          }
+        }
+      })
+    })
+  },
+  fadeIn (duration = 100, easing = 'easeInOutQuad', cb) {
+    if (easing instanceof Function) {
+      cb = easing
+      easing = 'easeInOutQuad'
+    }
+    this.each((el) => {
+      dom.css(el, 'display', dataPriv.get(el, 'display'))
+      anime({
+        targets: el,
+        opacity: [0, 1],
+        duration,
+        easing,
+        complete () {
+          if (cb) {
+            cb()
+          }
+        }
+      })
+    })
+  },
+  fadeOut (duration = 100, easing = 'easeInOutQuad', cb) {
+    if (easing instanceof Function) {
+      cb = easing
+      easing = 'easeInOutQuad'
+    }
+    this.each((el) => {
+      anime({
+        targets: el,
+        opacity: [1, 0],
+        duration,
+        easing,
+        complete () {
+          dom.css(el, 'display', 'none')
+          if (cb) {
+            cb()
+          }
         }
       })
     })
@@ -581,9 +643,7 @@ const listener = {
     })
   }
 }
-function curCSS (elem) {
-  return getComputedStyle(elem) || {}
-}
+
 /**
  * 获取元素高度或宽度
  * @param {*} elem - 元素
@@ -595,11 +655,11 @@ function getWidthOrHeight (elem, dimension, extra) {
   if (!(typeof elem === 'object' && elem.nodeType)) {
     throw Error('elem is not a valid Element')
   }
-  let val = parseFloat(curCSS(elem)[dimension])
+  let val = parseFloat(dom.css(elem, dimension))
   // const offsetProp = 'offset' + dimension[0].toUpperCase() + dimension.slice(1)
-  const isBorderBox = curCSS(elem).boxSizing === 'border-box'
+  const isBorderBox = dom.css(elem, 'boxSizing') === 'border-box'
   /** 处理隐藏元素 */
-  if (/none/.test(curCSS(elem).display)) {
+  if (/none/.test(dom.css(elem, 'display'))) {
     return swap(elem, (el) => {
       return getWidthOrHeight(el, dimension, extra)
     })
@@ -627,15 +687,15 @@ function boxModelAdjustment (elem, dimension, type, isBorderBox) {
   }
   for (; i < 4; i += 2) {
     if (isBorderBox && type === 'content') {
-      ret -= parseFloat(curCSS(elem)['border' + cssExpand[i] + 'Width'])
-      ret -= parseFloat(curCSS(elem)['padding' + cssExpand[i]])
+      ret -= parseFloat(dom.css(elem)['border' + cssExpand[i] + 'Width'])
+      ret -= parseFloat(dom.css(elem)['padding' + cssExpand[i]])
     } else {
       if (!isBorderBox) {
-        ret += parseFloat(curCSS(elem)['border' + cssExpand[i] + 'Width'])
-        ret += parseFloat(curCSS(elem)['padding' + cssExpand[i]])
+        ret += parseFloat(dom.css(elem)['border' + cssExpand[i] + 'Width'])
+        ret += parseFloat(dom.css(elem)['padding' + cssExpand[i]])
       }
       if (type === 'margin') {
-        ret += parseFloat(curCSS(elem)[type + cssExpand[i]])
+        ret += parseFloat(dom.css(elem)[type + cssExpand[i]])
       }
     }
   }
@@ -660,3 +720,65 @@ function swap (el, callback) {
   }
   return ret
 }
+
+//
+
+function Data () {
+  this.expando = dom.expando + Data.uid++
+}
+Data.uid = 1
+Data.prototype = {
+  cache: function (owner) {
+    var value = owner[this.expando]
+    if (!value) {
+      value = {}
+      owner[this.expando] = value
+    }
+    return value
+  },
+  set: function (owner, data) {
+    const cache = this.cache(owner)
+    if (data instanceof Object) {
+      for (const prop in data) {
+        cache[prop] = data[prop]
+      }
+    }
+  },
+  get: function (owner, key) {
+    return key === undefined ? this.cache(owner) : owner[ this.expando ] && owner[this.expando][key]
+  },
+  /**
+   * 记录样式属性
+   * @param {*} owner
+   * @param {string[]} props
+   */
+  record: function (owner, props = ['height', 'width', 'display', 'opacity']) {
+    if (!(owner instanceof Object && owner.nodeType === 1)) {
+      return
+    }
+    const orig = {}
+    const record = {}
+    props.map((item) => {
+      orig[item] = dom.css(owner)[item]
+      if (dataPriv.get(owner, item) === undefined) {
+        record[item] = orig[item]
+      }
+    })
+    dataPriv.set(owner, record)
+    return orig
+  },
+  /**
+   * 还原样式属性
+   * @param {*} owner
+   * @param {string[]} props
+   */
+  restore: function (owner, props) {
+    if (props === undefined) {
+      props = Object.keys(this.get(owner))
+    }
+    props.map((item) => {
+      owner.style[item] = this.get(owner, item)
+    })
+  }
+}
+var dataPriv = new Data()

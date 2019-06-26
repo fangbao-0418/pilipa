@@ -1,3 +1,7 @@
+/// <reference types="animejs" />
+
+export type EasingProps = anime.EasingOptions | string | ReadonlyArray<number>;
+
 export type Selector = string | DomInstance | Element | React.ReactInstance | Document
 export interface DomInstance {
   [key: number]: HTMLElement
@@ -16,8 +20,6 @@ export interface DomInstance {
   merge (first: any, second: any): any
   find (el: Selector): DomInstance
   html (html: string): void
-  fadeIn (n: number, cb: any): void
-  fadeOut (n: number, cb: any): void
   parent (): any
   each (cb: (el?: Node, index?: number) => void): void
   attr (name: object | string, value?: any): void
@@ -49,8 +51,10 @@ export interface DomInstance {
   trigger (event: string): void
   one (envent: string, fn: (e?: E) => void): void
   hover (onmouseover: (e?: any) => void, onmouseleave: (e?: E) => void): void
-  slideDown (): void
-  slideUp (): void
+  fadeIn<C = any> (speed?: number, easing?: EasingProps | C, cb?: C): void
+  fadeOut<C = any> (speed?: number, easing?: EasingProps | C, cb?: C): void
+  slideDown<C = any> (speed?: number, easing?: EasingProps | C, cb?: C): void
+  slideUp<C = any> (speed?: number, easing?: EasingProps | C, cb?: C): void
 }
 export interface E extends Event {
   params: any[]
@@ -60,6 +64,7 @@ export interface E extends Event {
 interface DomFunc {
   (selctor: Selector): DomInstance
   param: (params: object) => string
+  css: (elem: Element, name: string | object, value: string | number) => any
 }
 declare const dom: DomFunc
 export default dom

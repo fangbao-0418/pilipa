@@ -1,11 +1,15 @@
 import React from 'react'
 import $ from '../components/dom'
+import './styles/dom'
 class Main extends React.Component {
   constructor () {
     super()
     this.clicked = false
   }
   componentDidMount () {
+    this.registerEvent()
+  }
+  registerEvent () {
     /**
      * event test
      */
@@ -17,96 +21,164 @@ class Main extends React.Component {
       $(document).off('click', func)
     }
     $(document).on('click', func)
+    $('.d').on('abc', (e) => {
+      alert('.d abc event is trigger')
+      // $('.d').off('abc')
+    })
+    $('.d').on('click', (e) => {
+      alert('.d is clicked')
+      $('.d').off('click')
+    })
+    $('.d .abc').on('click', (e) => {
+      alert('.abc is clicked')
+    })
     $('.f').click(() => {
+      alert('.f is clicked')
       $('.d').trigger('click')
       $('.d').trigger('abc', 2, '2')
     })
-    $('.d').on('abc', (e) => {
-      console.log(e, 'abc')
-    })
-    $('.d').off('abc')
-    /**
-     * dom操作
-     */
-    $('.d').append('<input >').find('input').val('222')
-    console.log($('input').val())
-    var el = $('<div class="abc"/>')
-    $('div, h3').append(el)
-    $('.box').append(el)
-    console.log($('.box').append($('<div>123333</div>')))
-    console.log($('div').find('span'), 'find')
-    $('div').addClass('abcedf 123').removeClass('abcedf 123')
-    console.log($('div').parent(), 'parents')
-    // console.log(decodeURIComponent($.param({
-    //   a: {s: /\w/},
-    //   b: {a: new Date(), c: null},
-    //   c: {},
-    //   d: null,
-    //   f: 0,
-    //   e: ''
-    // })), 'param')
-    $('.info').text(`
-      元素 .h
-      width + padding + border ${$('.h').outerWidth()}
-      height + padding + border ${$('.h').outerHeight()}
-      width + padding + border + margin ${$('.h').outerWidth(true)}
-      height + padding + border + margin ${$('.h').outerHeight(true)}
-      content width ${$('.h').width()}
-      content height ${$('.h').height()}
-    `)
-    console.log($('.g').height(), '隐藏div高度')
   }
   toggle () {
-    !this.clicked ? $('.abc').fadeOut() : $('.abc').fadeIn()
+    !this.clicked ? $('.g').fadeOut(1000) : $('.g').fadeIn(1000)
     this.clicked = !this.clicked
   }
   render () {
     return (
-      <div className='box'>
+      <div className='dom box'>
+        <h3>dom测试</h3>
         <div
-          className='h'
-          style={{
-            // boxSizing: 'border-box',
-            boxSizing: 'content-box',
-            // display: 'none',
-            height: 100,
-            margin: '10px 8px 12px',
-            padding: 10,
-            border: '1px solid #000'
+          className='content'
+        >
+          <div id='box_010'></div>
+          <button
+            onClick={() => {
+              $('#box_010').append('<input >').find('input').val('222')
+            }}
+          >添加一个input</button>
+          <button
+            onClick={() => {
+              alert($('#box_010').find('input').val())
+            }}
+          >获取input的value</button>
+        </div>
+        <h3>Event 测试</h3>
+        <div
+          className='content'
+        >
+          <div className='d'>
+            d
+            <div className='abc'>abc</div>
+          </div>
+          <div className='f'>trigger d click</div>
+        </div>
+        <h3>fadeIn fadeOut 测试</h3>
+        <div
+          className='content'
+        >
+          <div
+            className='g'
+            style={{
+              width: 100,
+              height: 100,
+              background: 'red'
+            }}
+          ></div>
+          <button onClick={this.toggle.bind(this)}>测试</button>
+        </div>
+        <h3>width height outerHeight outerWidth测试</h3>
+        <div className='content'>
+          <button
+            onClick={() => {
+              $('.info').text(`
+                width + padding + border ${$('.h').outerWidth()}
+                height + padding + border ${$('.h').outerHeight()}
+                width + padding + border + margin ${$('.h').outerWidth(true)}
+                height + padding + border + margin ${$('.h').outerHeight(true)}
+                content width ${$('.h').width()}
+                content height ${$('.h').height()}
+              `)
+            }}
+          >获取宽高信息</button>
+          <div
+            className='h'
+            style={{
+              // boxSizing: 'border-box',
+              boxSizing: 'content-box',
+              display: 'none',
+              height: 100,
+              margin: '10px 8px 12px',
+              padding: 10,
+              border: '1px solid #000',
+              background: 'red'
+            }}
+          >
+            <div>abc</div>
+            <div>def</div>
+          </div>
+          <span className='info'></span>
+        </div>
+        <h3>样式测试</h3>
+        <span className='text1' style={{marginRight: 10}}>测试字体</span>
+        <span className='text2'>测试字体</span>
+        <br />
+        <button
+          onClick={() => {
+            $('.text1').css({
+              color: 'red'
+            })
           }}
         >
-          <div>abc</div>
-          <div>def</div>
-        </div>
-        <div className='abc'>b</div>
-        <div className='d'>d</div>
-        <div className='f'>trigger d click</div>
-        <div
-          className='g'
-          style={{
-            width: 100,
-            // height: 100,
-            display: 'none'
+          改变颜色
+        </button>
+        <button
+          onClick={() => {
+            $('.text2').css('font-size', '12px')
           }}
-        >隐藏盒子</div>
-        <button onClick={this.toggle.bind(this)}>测试</button>
-        <span className='info'></span>
-        <button onClick={() => {
-          $('.h').slideUp()
-          // if ($('.h')) {
-          //   $('.h').slideUp()
-          // } else {
-          //   $('.h').slideDown()
-          // }
-        }}>slideUp</button>
-        <button onClick={() => {
-          $('.h').slideDown()
-          // if ($('.h')) {
-          //   $('.h').slideUp()
-          // } else {
-          //   $('.h').slideDown()
-          // }
-        }}>slideDown</button>
+        >
+          改变字体大小
+        </button>
+        <button
+          onClick={() => {
+            alert($('.text2').css('font-size'))
+          }}
+        >
+          获取样式结果
+        </button>
+        <button
+          onClick={() => {
+            $('.text1, .text2').css({
+              fontSize: '',
+              color: ''
+            })
+          }}
+        >
+          还原
+        </button>
+        <h3>slideDown slideUp 测试</h3>
+        <div className='content'>
+          <div
+            id='box_1'
+            style={{
+              width: 100,
+              height: 100,
+              background: 'red',
+              margin: 10,
+              pdding: 10,
+              border: '1px solid #000'
+            }}
+          >
+          </div>
+          <button onClick={() => {
+            $('#box_1').slideUp(1000, 'easeInOutBack', () => {
+              // alert('slideUp ok')
+            })
+          }}>slideUp</button>
+          <button onClick={() => {
+            $('#box_1').slideDown(2000, () => {
+              // alert('slideDown ok')
+            })
+          }}>slideDown</button>
+        </div>
       </div>
     )
   }
