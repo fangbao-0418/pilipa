@@ -1,6 +1,6 @@
 {
   "name": "pilipa",
-  "version": "3.0.8-alpha.8",
+  "version": "3.0.8-alpha.9",
   "description": "噼里啪前端组件，基于react。",
   "main": "libs/index.js",
   "typings": "libs/index.d.ts",

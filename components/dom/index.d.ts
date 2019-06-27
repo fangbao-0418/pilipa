@@ -65,6 +65,8 @@ interface DomFunc {
   (selctor: Selector): DomInstance
   param: (params: object) => string
   css: (elem: Element, name: string | object, value: string | number) => any
+  /** 空对象判断 */
+  isEmptyObject: (obj: object) => boolean
 }
 declare const dom: DomFunc
 export default dom

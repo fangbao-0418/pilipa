@@ -43,6 +43,13 @@ dom.param = function (obj) {
   const str = arr.join('&')
   return str
 }
+dom.isEmptyObject = function (obj) {
+  let key
+  for (key in obj) {
+    return false
+  }
+  return true
+}
 /**
  * 操作css
  * @param {Element} elem - 元素
@@ -69,6 +76,34 @@ dom.css = function (elem, name, value) {
     for (const prop in name) {
       elem.style[prop] = name[prop]
     }
+  }
+}
+dom.queue = function (elem, type = 'fx', fn) {
+  type = type + 'queue'
+  let queue = dataPriv.get(elem, type)
+  if (queue === undefined) {
+    queue = dataPriv.set(elem, type, [])[type]
+  }
+  if (fn) {
+    queue.push(fn)
+  }
+  return queue
+}
+dom.dequeue = function (elem, type = 'fx') {
+  const queue = dom.queue(elem, type)
+  let fn = queue.shift()
+  const next = function () {
+    dom.dequeue(elem, type)
+  }
+  if (fn === 'inprogress') {
+    fn = queue.shift()
+  }
+  if (fn) {
+    queue.unshift('inprogress')
+    fn(next)
+  }
+  if (queue.length === 0) {
+    dataPriv.remove(elem, type + 'queue')
   }
 }
 const Dom = function (selector) {
@@ -525,31 +560,38 @@ Dom.prototype = {
       easing = 'easeInOutQuad'
     }
     this.each((el) => {
-      const display = dom.css(el, 'display')
-      if (display !== 'none') {
-        return
-      }
-      const orig = dataPriv.get(el)
-      anime({
-        targets: el,
-        height: [0, parseFloat(orig.height)],
-        opacity: [0, 1],
-        duration,
-        easing,
-        begin () {
-          if (display !== 'none') {
-            dom.css(el).css('display', dataPriv.get(el, 'display'))
-          } else {
-            dom.css(el, 'display', '')
-          }
-        },
-        complete () {
-          dataPriv.restore(el)
-          if (cb) {
-            cb()
-          }
+      const queue = dom.queue(el, 'fx', (next) => {
+        const display = dom.css(el, 'display')
+        if (display !== 'none') {
+          next()
+          return
         }
+        const orig = dataPriv.get(el)
+        anime({
+          targets: el,
+          height: [0, parseFloat(orig.height)],
+          opacity: [0, 1],
+          duration,
+          easing,
+          begin () {
+            if (display !== 'none') {
+              dom.css(el).css('display', dataPriv.get(el, 'display'))
+            } else {
+              dom.css(el, 'display', '')
+            }
+          },
+          complete () {
+            dataPriv.restore(el)
+            if (cb) {
+              cb()
+            }
+            next()
+          }
+        })
       })
+      if (queue[0] !== 'inprogress') {
+        dom.dequeue(el, 'fx')
+      }
     })
   },
   slideUp (duration = 100, easing = 'easeInOutQuad', cb) {
@@ -558,24 +600,31 @@ Dom.prototype = {
       easing = 'easeInOutQuad'
     }
     this.each((el) => {
-      if (dom.css(el).display === 'none') {
-        return
-      }
-      const orig = dataPriv.get(el)
-      anime({
-        targets: el,
-        height: [parseFloat(orig.height), 0],
-        opacity: [1, 0],
-        duration,
-        easing: easing,
-        complete () {
-          dataPriv.restore(el)
-          dom.css(el, 'display', 'none')
-          if (cb) {
-            cb()
-          }
+      const queue = dom.queue(el, 'fx', (next) => {
+        if (dom.css(el).display === 'none') {
+          next()
+          return
         }
+        const orig = dataPriv.get(el)
+        anime({
+          targets: el,
+          height: [parseFloat(orig.height), 0],
+          opacity: [1, 0],
+          duration,
+          easing: easing,
+          complete () {
+            dataPriv.restore(el)
+            dom.css(el, 'display', 'none')
+            if (cb) {
+              cb()
+            }
+            next()
+          }
+        })
       })
+      if (queue[0] !== 'inprogress') {
+        dom.dequeue(el, 'fx')
+      }
     })
   },
   fadeIn (duration = 100, easing = 'easeInOutQuad', cb) {
@@ -584,18 +633,24 @@ Dom.prototype = {
       easing = 'easeInOutQuad'
     }
     this.each((el) => {
-      dom.css(el, 'display', dataPriv.get(el, 'display'))
-      anime({
-        targets: el,
-        opacity: [0, 1],
-        duration,
-        easing,
-        complete () {
-          if (cb) {
-            cb()
+      const queue = dom.queue(el, 'fx', (next) => {
+        dom.css(el, 'display', dataPriv.get(el, 'display'))
+        anime({
+          targets: el,
+          opacity: [0, 1],
+          duration,
+          easing,
+          complete () {
+            if (cb) {
+              cb()
+            }
+            next()
           }
-        }
+        })
       })
+      if (queue[0] !== 'inprogress') {
+        dom.dequeue(el, 'fx')
+      }
     })
   },
   fadeOut (duration = 100, easing = 'easeInOutQuad', cb) {
@@ -604,18 +659,24 @@ Dom.prototype = {
       easing = 'easeInOutQuad'
     }
     this.each((el) => {
-      anime({
-        targets: el,
-        opacity: [1, 0],
-        duration,
-        easing,
-        complete () {
-          dom.css(el, 'display', 'none')
-          if (cb) {
-            cb()
+      const queue = dom.queue(el, 'fx', (next) => {
+        anime({
+          targets: el,
+          opacity: [1, 0],
+          duration,
+          easing,
+          complete () {
+            dom.css(el, 'display', 'none')
+            if (cb) {
+              cb()
+            }
+            next()
           }
-        }
+        })
       })
+      if (queue[0] !== 'inprogress') {
+        dom.dequeue(el, 'fx')
+      }
     })
   }
 }
@@ -736,16 +797,35 @@ Data.prototype = {
     }
     return value
   },
-  set: function (owner, data) {
+  set: function (owner, data, value) {
     const cache = this.cache(owner)
+    if (typeof data === 'string') {
+      cache[data] = value
+    }
     if (data instanceof Object) {
       for (const prop in data) {
         cache[prop] = data[prop]
       }
     }
+    return cache
   },
   get: function (owner, key) {
     return key === undefined ? this.cache(owner) : owner[ this.expando ] && owner[this.expando][key]
+  },
+  remove: function (owner, key) {
+    const cache = owner[this.expando]
+    if (key === undefined) {
+      owner[this.expando] = undefined
+      return
+    }
+    if (typeof key === 'string') {
+      key = [key]
+    }
+    key.map((item) => {
+      if (item in cache) {
+        delete cache[key]
+      }
+    })
   },
   /**
    * 记录样式属性
@@ -764,6 +844,7 @@ Data.prototype = {
         record[item] = orig[item]
       }
     })
+    record.props = props
     dataPriv.set(owner, record)
     return orig
   },
@@ -774,7 +855,7 @@ Data.prototype = {
    */
   restore: function (owner, props) {
     if (props === undefined) {
-      props = Object.keys(this.get(owner))
+      props = this.get(owner, 'props')
     }
     props.map((item) => {
       owner.style[item] = this.get(owner, item)
