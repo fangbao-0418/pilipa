@@ -164,7 +164,8 @@ class Main extends React.Component {
               background: 'red',
               margin: 10,
               pdding: 10,
-              border: '1px solid #000'
+              border: '1px solid #000',
+              display: 'none'
             }}
           >
           </div>

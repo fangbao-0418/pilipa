@@ -1,6 +1,6 @@
 {
   "name": "pilipa",
-  "version": "3.0.8-alpha.9",
+  "version": "3.0.8-alpha.11",
   "description": "噼里啪前端组件，基于react。",
   "main": "libs/index.js",
   "typings": "libs/index.d.ts",
@@ -19,12 +19,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/animejs": "^2.0.2",
     "animejs": "^3.0.1",
     "babel-polyfill": "^6.26.0",
     "classnames": "^2.2.5"
   },
   "devDependencies": {
-    "@types/animejs": "^2.0.2",
     "@types/classnames": "^2.2.3",
     "@types/react-dom": "16.0.2",
     "autoprefixer": "^7.2.5",

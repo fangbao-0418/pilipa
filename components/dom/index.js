@@ -582,6 +582,9 @@ Dom.prototype = {
           },
           complete () {
             dataPriv.restore(el)
+            if (orig.display === 'none') {
+              dom.css(el, 'display', '')
+            }
             if (cb) {
               cb()
             }
@@ -782,7 +785,7 @@ function swap (el, callback) {
   return ret
 }
 
-//
+// ////////////////////////////
 
 function Data () {
   this.expando = dom.expando + Data.uid++
