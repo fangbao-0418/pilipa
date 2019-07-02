@@ -78,6 +78,21 @@ dom.css = function (elem, name, value) {
     }
   }
 }
+dom.attr = function (elem, name, value) {
+  if (typeof name === 'string') {
+    if (value === undefined) {
+      return elem && elem.getAttribute(name)
+    } else {
+      elem.setAttribute(name, value)
+    }
+  } else if (name instanceof Object) {
+    for (const key in name) {
+      if (name.hasOwnProperty(key)) {
+        elem.setAttribute(key, name[key])
+      }
+    }
+  }
+}
 dom.queue = function (elem, type = 'fx', fn) {
   type = type + 'queue'
   let queue = dataPriv.get(elem, type)
@@ -334,9 +349,6 @@ Dom.prototype = {
     if (cb) {
       for (const key in this) {
         if (/\d{1,}/.test(key) && this.hasOwnProperty(key)) {
-          if (this[key] instanceof Object && this[key].nodeType === 1) {
-            dataPriv.record(this[key])
-          }
           cb(this[key], Number(key))
         }
       }
@@ -561,12 +573,16 @@ Dom.prototype = {
     }
     this.each((el) => {
       const queue = dom.queue(el, 'fx', (next) => {
+        const orig = dataPriv.record(el)
         const display = dom.css(el, 'display')
         if (display !== 'none') {
           next()
           return
         }
-        const orig = dataPriv.get(el)
+        dom.css(el, {
+          height: orig.height + 'px',
+          overflow: 'hidden'
+        })
         anime({
           targets: el,
           height: [0, parseFloat(orig.height)],
@@ -574,16 +590,17 @@ Dom.prototype = {
           duration,
           easing,
           begin () {
+            dom.css(el, 'height', orig.height)
             if (display !== 'none') {
-              dom.css(el).css('display', dataPriv.get(el, 'display'))
+              dom.css(el).css('display', orig.display)
             } else {
-              dom.css(el, 'display', '')
+              dom.css(el, 'display', 'block')
             }
           },
           complete () {
             dataPriv.restore(el)
-            if (orig.display === 'none') {
-              dom.css(el, 'display', '')
+            if (display === 'none') {
+              dom.css(el, 'display', 'block')
             }
             if (cb) {
               cb()
@@ -604,11 +621,16 @@ Dom.prototype = {
     }
     this.each((el) => {
       const queue = dom.queue(el, 'fx', (next) => {
-        if (dom.css(el).display === 'none') {
+        const orig = dataPriv.record(el)
+        const display = dom.css(el, 'display')
+        if (display === 'none') {
           next()
           return
         }
-        const orig = dataPriv.get(el)
+        dom.css(el, {
+          height: orig.height + 'px',
+          overflow: 'hidden'
+        })
         anime({
           targets: el,
           height: [parseFloat(orig.height), 0],
@@ -625,6 +647,7 @@ Dom.prototype = {
           }
         })
       })
+      console.log(queue, 'queue')
       if (queue[0] !== 'inprogress') {
         dom.dequeue(el, 'fx')
       }
@@ -637,13 +660,19 @@ Dom.prototype = {
     }
     this.each((el) => {
       const queue = dom.queue(el, 'fx', (next) => {
-        dom.css(el, 'display', dataPriv.get(el, 'display'))
+        const orig = dataPriv.record(el)
+        if (orig.display === 'none') {
+          dom.css(el, 'display', 'block')
+        } else {
+          dom.css(el, 'display', orig.display)
+        }
         anime({
           targets: el,
           opacity: [0, 1],
           duration,
           easing,
           complete () {
+            dataPriv.restore(el)
             if (cb) {
               cb()
             }
@@ -663,12 +692,14 @@ Dom.prototype = {
     }
     this.each((el) => {
       const queue = dom.queue(el, 'fx', (next) => {
+        dataPriv.record(el)
         anime({
           targets: el,
           opacity: [1, 0],
           duration,
           easing,
           complete () {
+            dataPriv.restore(el)
             dom.css(el, 'display', 'none')
             if (cb) {
               cb()
@@ -710,12 +741,12 @@ const listener = {
 
 /**
  * 获取元素高度或宽度
- * @param {*} elem - 元素
- * @param {width|height} dimension - 维度
- * @param {margin|border|content|''} extra - 盒模型类型
+ * @param {Element} elem - 元素
+ * @param {'width'|'height'} dimension - 维度
+ * @param {'margin'|'border'|'content'|''} extra - 盒模型类型
  * @returns {number}
  */
-function getWidthOrHeight (elem, dimension, extra) {
+function getWidthOrHeight (elem, dimension = 'height', extra) {
   if (!(typeof elem === 'object' && elem.nodeType)) {
     throw Error('elem is not a valid Element')
   }
@@ -731,7 +762,6 @@ function getWidthOrHeight (elem, dimension, extra) {
   if (!isBorderBox && extra === 'content') {
     return parseFloat(val) || 0
   }
-  // val = elem[offsetProp]
   val += boxModelAdjustment(elem, dimension, extra, isBorderBox)
   val = parseFloat(val)
   return val >= 0 ? val : 0
@@ -835,19 +865,29 @@ Data.prototype = {
    * @param {*} owner
    * @param {string[]} props
    */
-  record: function (owner, props = ['height', 'width', 'display', 'opacity']) {
+  record: function (owner) {
+    const props = ['height', 'width', 'display', 'opacity']
     if (!(owner instanceof Object && owner.nodeType === 1)) {
       return
     }
+    const style = dom.attr(owner, 'style')
     const orig = {}
     const record = {}
     props.map((item) => {
-      orig[item] = dom.css(owner)[item]
       if (dataPriv.get(owner, item) === undefined) {
+        if (['width', 'height'].indexOf(item) > -1) {
+          orig[item] = getWidthOrHeight(owner, item, 'content')
+        } else {
+          orig[item] = dom.css(owner)[item]
+        }
         record[item] = orig[item]
+      } else {
+        orig[item] = dataPriv.get(owner, item)
       }
     })
-    record.props = props
+    if (dataPriv.get(owner, 'style') === undefined && style !== null) {
+      record.style = style
+    }
     dataPriv.set(owner, record)
     return orig
   },
@@ -856,12 +896,14 @@ Data.prototype = {
    * @param {*} owner
    * @param {string[]} props
    */
-  restore: function (owner, props) {
-    if (props === undefined) {
-      props = this.get(owner, 'props')
-    }
+  restore: function (owner) {
+    const props = ['height', 'width', 'opacity']
+    const style = this.get(owner, 'style')
+    owner.style = style
+    dom.css(owner, 'display', this.get(owner, 'display'))
+    this.remove(owner, 'style')
     props.map((item) => {
-      owner.style[item] = this.get(owner, item)
+      this.remove(owner, item)
     })
   }
 }

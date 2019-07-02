@@ -155,30 +155,35 @@ class Main extends React.Component {
           还原
         </button>
         <h3>slideDown slideUp 测试</h3>
-        <div className='content'>
-          <div
-            id='box_1'
-            style={{
-              width: 100,
-              height: 100,
-              background: 'red',
-              margin: 10,
-              pdding: 10,
-              border: '1px solid #000',
-              display: 'none'
-            }}
-          >
-          </div>
+        <div className='content content11'>
           <button onClick={() => {
-            $('#box_1').slideUp(1000, 'easeInOutBack', () => {
+            $('.content11').find('.box_1').slideUp(1000, 'easeInOutBack', () => {
               // alert('slideUp ok')
             })
           }}>slideUp</button>
           <button onClick={() => {
-            $('#box_1').slideDown(2000, () => {
-              // alert('slideDown ok')
-            })
+            $('.content11').children('.box_1').slideDown(200)
           }}>slideDown</button>
+          <div
+            className='box_1'
+            style={{
+              // width: 100,
+              // height: 100,
+              background: 'red'
+              // margin: 10,
+              // pdding: 10,
+              // border: '1px solid #000'
+              // display: 'none'
+            }}
+          >
+            <div>
+              <div>刻字管理</div>
+              <div>刻字管理</div>
+              <div>刻字管理</div>
+              <div>刻字管理</div>
+              <div>刻字管理</div>
+            </div>
+          </div>
         </div>
       </div>
     )
