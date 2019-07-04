@@ -13,29 +13,32 @@ class Main extends React.Component {
     /**
      * event test
      */
-    $('.abc').one('click', (e) => {
+    $('.abc').one('click', function (e) {
       console.log(this, e, 'click')
     })
-    const func = (e) => {
-      console.log(this, e.target, 'click')
-      $(document).off('click', func)
-    }
-    $(document).on('click', func)
-    $('.d').on('abc', (e) => {
-      alert('.d abc event is trigger')
-      // $('.d').off('abc')
-    })
-    $('.d').on('click', (e) => {
-      alert('.d is clicked')
-      $('.d').off('click')
-    })
-    $('.d .abc').on('click', (e) => {
-      alert('.abc is clicked')
-    })
-    $('.f').click(() => {
-      alert('.f is clicked')
-      $('.d').trigger('click')
-      $('.d').trigger('abc', 2, '2')
+    // const func = (e) => {
+    //   console.log(this, e.target, 'click')
+    //   $(document).off('click', func)
+    // }
+    // $(document).on('click', func)
+    // $('.d').on('abc', (e) => {
+    //   alert('.d abc event is trigger')
+    //   // $('.d').off('abc')
+    // })
+    // $('.d').on('click', (e) => {
+    //   alert('.d is clicked')
+    //   $('.d').off('click')
+    // })
+    // // $('.d .abc').on('click', (e) => {
+    // //   alert('.abc is clicked')
+    // // })
+    // $('.f').click(() => {
+    //   alert('.f is clicked')
+    //   $('.d').trigger('click')
+    //   $('.d').trigger('abc', 2, '2')
+    // })
+    $('.ff').click(function (e) {
+      console.log(e, this, '.ff click')
     })
   }
   toggle () {
@@ -70,6 +73,13 @@ class Main extends React.Component {
             <div className='abc'>abc</div>
           </div>
           <div className='f'>trigger d click</div>
+          <div
+            className='ff'
+          >
+            <div>
+              测试click
+            </div>
+          </div>
         </div>
         <h3>fadeIn fadeOut 测试</h3>
         <div

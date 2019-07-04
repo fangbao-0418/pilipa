@@ -21,7 +21,7 @@ export interface DomInstance {
   find (el: Selector): DomInstance
   html (html: string): void
   parent (): any
-  each (cb: (el?: Node, index?: number) => void): void
+  each (cb: (el?: Element, index?: number) => void): void
   attr (name: object | string, value?: any): void
   css (name: object | string, value?: any): any
   text (str: string): string
