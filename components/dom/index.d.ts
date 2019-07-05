@@ -43,7 +43,7 @@ export interface DomInstance {
   outerWidth (isContainOuter?: boolean): number
   outerHeight (isContainOuter?: boolean): number
   scroll (fn: (e?: E) => void): void
-  scrollTop (top?: number): number
+  scrollTop (top?: number, duration?: number): number
   val (value?: any): string
   select (): void
   keydown (fn: (e?: E) => void): this
@@ -64,7 +64,7 @@ export interface E extends Event {
 interface DomFunc {
   (selctor: Selector): DomInstance
   param: (params: object) => string
-  css: (elem: Element, name: string | object, value: string | number) => any
+  css: (elem: Element, name: string | object, value?: string | number) => any
   /** 空对象判断 */
   isEmptyObject: (obj: object) => boolean
 }
